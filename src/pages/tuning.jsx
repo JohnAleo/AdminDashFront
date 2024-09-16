@@ -1,208 +1,169 @@
-import * as React from 'react';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Table from '@mui/joy/Table';
-import Typography from '@mui/joy/Typography';
-import Sheet from '@mui/joy/Sheet';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
-import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
-import DialogTitle from '@mui/joy/DialogTitle';
-import DialogContent from '@mui/joy/DialogContent';
-import Stack from '@mui/joy/Stack';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
-import Divider from '@mui/joy/Divider';
-import DialogActions from '@mui/joy/DialogActions';
-import Add from '@mui/icons-material/Add';
-import { tuning } from '../mock/tuningmock';
+import React, { useState ,useEffect} from 'react';
+import axios from "axios"
+import { BaseURL, errConsole } from '../config';
+function NewPage() {
+    // React functions
+  const [tableData, setTableData] = useState([]);
+  const [editingRow, setEditingRow] = useState(null);
+
+  const [name, setName]= useState("")
+  const [company, setCompany]= useState("")
+  const [cost, setCost]= useState("")
+  const [people, setPeople]= useState("")
+  const [location, setLocation]= useState("")
+  const [type, setType]= useState("")
+  const [date, setDate]= useState("")
+  const [newName, setNewName]= useState("")
+  const [newCompany, setNewCompany]= useState("")
+  const [newCost, setNewCost]= useState("")
+  const [newPeople, setNewPeople]= useState("")
+  const [newLocation, setNewLocation]= useState("")
+  const [newType, setNewType]= useState("")
+  const [newDate, setNewDate]= useState("")
+
+  useEffect(()=>{
+    fetchData(); 
+  },)
+  const fetchData=async()=>{
+    try {
+      const response= await axios.get(BaseURL);
+      setTableData(response.data);
+    } catch (error) {
+     console.log(errConsole,error) 
+    }
+  }
+  const handleAddRow = async (event) => {
+    event.preventDefault();
+    if(name !== ''){
+      try {
+        const response= await axios.post(BaseURL, {
+          name, company,cost, people, location ,type, date
+        });
+        console.log(response.data)
+        fetchData();
+        setName('')
+        setCompany('')
+        setCost('')
+        setPeople('')
+        setLocation('')
+        setType('')
+        setDate('')
+      } catch (error) {
+        console.error(errConsole, error);
+      }
+    }
+    setTableData([...tableData, { name: '', company: '', cost: '', people: '', location: '', type: '', date: '' }]);
+  };
+
+  // const handleEditRow = (index) => {
+  //   setEditingRow(index);
+  // };
+  const handleEditRow = async(oldname) =>{
+    try {
+      const response=await axios.put(`${BaseURL}/${oldname}`, 
+      {
+      newName,
+      newCompany,
+      newCost,
+      newPeople,
+      newLocation,
+      newType,
+      newDate  
+      })
+      console.log(response.data)
+
+      setNewName("");
+      setNewCompany("");
+      setNewCost("")
+      setNewPeople("")
+      setNewLocation("")
+      setNewType("")
+      setNewDate("")
+      setEditingRow(null)
+      fetchData();
+    } catch (error) {
+      console.error(errConsole)
+    }
+  }
+
+  const handleDeleteRow = async (oldname) => {
+    try {
+      const response= await axios.delete(`${BaseURL}/${oldname}`);
+      console.log(response.data);
+      fetchData();
+    } catch (error) {
+      console.error(errConsole)
+    }
+    // const updatedTableData = [...tableData];
+    // updatedTableData.splice(index, 1);
+    // setTableData(updatedTableData);
+  };
+
+  const handleInputChange = (event, index, field) => {
+    const updatedTableData = [...tableData];
+    updatedTableData[index][field] = event.target.value;
+    setTableData(updatedTableData);
+  };
+
+  const handleSaveRow = (index) => {
+    setEditingRow(null);
+  };
+//   
 
 
-export default function TuningComponent() {
-  const [openDiscard,setOpenDiscard]=React.useState(false)
-  const [open, setOpen] = React.useState(false);
-  const data = tuning.maindata;
-    console.log("camp carausel data:", data)
   return (
-    <>
-   
-    <Box sx={{ width: '100%' }}> 
-      <div style={{display:'flex',
-                  justifyContent:'space-between',
-                  padding:'15px 2%'}}>
-        <Typography sx={{fontSize:'22px',fontWeight:'600',}}>
-          Tuning Car
-          </Typography>
-         <Button variant="solid" onClick={() => setOpen(true)}> 
-           Add New Tuning 
-          </Button> 
-          <Modal open={open} onClose={() => setOpen(false)}>
-          <ModalDialog>
-            <DialogTitle>Add New Tuning</DialogTitle>
-            <DialogContent>Fill in the information of the Motor.</DialogContent>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              setOpen(false);
-            }}
-          >
-            <Stack spacing={2}>
-              <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input autoFocus required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Company</FormLabel>
-                <Input required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Cost</FormLabel>
-                <Input required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Location</FormLabel>
-                <Input required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Type</FormLabel>
-                <Input required />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Date</FormLabel>
-                <Input required />
-              </FormControl>
-              <Button type="submit">Submit</Button>
-            </Stack>
-          </form>
-        </ModalDialog>
-      </Modal>
-
-      </div>
-
-     
-      <Sheet
-        variant="outlined"
-        sx={{
-          margin:'30px',
-          '--TableCell-height': '40px',
-          // the number is the amount of the header rows.
-          '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-          '--Table-firstColumnWidth': '80px',
-          '--Table-lastColumnWidth': '144px',
-          // background needs to have transparency to show the scrolling shadows
-          '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
-          '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
-          overflow: 'auto',
-          background: (theme) =>
-            `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
-            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
-            radial-gradient(
-              farthest-side at 0 50%,
-              rgba(0, 0, 0, 0.12),
-              rgba(0, 0, 0, 0)
-            ),
-            radial-gradient(
-                farthest-side at 100% 50%,
-                rgba(0, 0, 0, 0.12),
-                rgba(0, 0, 0, 0)
-              )
-              0 100%`,
-          backgroundSize:
-            '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'local, local, scroll, scroll',
-          backgroundPosition:
-            'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-          backgroundColor: 'background.surface',
-        }}
-      >
-        <Table
-        
-          borderAxis="bothBetween"
-          stripe="odd"
-          hoverRow
-          sx={{
-           
-            '& tr > *:first-child': {
-              position: 'sticky',
-              left: 0,
-              boxShadow: '1px 0 var(--TableCell-borderColor)',
-              bgcolor: 'background.surface',
-            },
-            '& tr > *:last-child': {
-              position: 'sticky',
-              right: 0,
-              bgcolor: 'var(--TableCell-headBackground)',
-            },
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={{ width: 20 }}>No</th>
-              <th style={{ width: 130 }}>Name</th>
-              <th style={{ width: 130 }}>Company&nbsp;(g)</th>
-              <th style={{ width: 130 }}>Cost&nbsp;(g)</th>
-              <th style={{ width: 130 }}>People&nbsp;(g)</th>
-              <th style={{ width: 130 }}>Location&nbsp;(g)</th>
-              <th style={{ width: 130 }}>Type&nbsp;(g)</th>
-              <th style={{ width: 130 }}>Date&nbsp;(g)</th>
-              <th
-                aria-label="last"
-                style={{ width: 'var(--Table-lastColumnWidth)'}}
-              />
+    <div className="container">
+      <h1>Admin Dashboard</h1>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Cost</th>
+            <th>People</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, index) => (
+            <tr key={index}>
+              {editingRow === index ? (
+                <>
+                  <td><input type="text" value={row.name} onChange={(event) => handleInputChange(event, index, 'name')} /></td>
+                  <td><input type="text" value={row.company} onChange={(event) => handleInputChange(event, index, 'company')} /></td>
+                  <td><input type="number" value={row.cost} onChange={(event) => handleInputChange(event, index, 'cost')} /></td>
+                  <td><input type="number" value={row.people} onChange={(event) => handleInputChange(event, index, 'people')} /></td>
+                  <td><input type="text" value={row.location} onChange={(event) => handleInputChange(event, index, 'location')} /></td>
+                  <td><input type="text" value={row.type} onChange={(event) => handleInputChange(event, index, 'type')} /></td>
+                  <td><input type="date" value={row.date} onChange={(event) => handleInputChange(event, index, 'date')} /></td>
+                  <td><button onClick={() => handleSaveRow(index)}>Save</button></td>
+                </>
+              ) : (
+                <>
+                  <td>{row.name || `no name`}</td>
+                  <td>{row.company || `no company`}</td>
+                  <td>{row.cost || `no cost`}</td>
+                  <td>{row.people || `no people`}</td>
+                  <td>{row.location || `no location`}</td>
+                  <td>{row.type || `no type`}</td>
+                  <td>{row.date || `no date`}</td>
+                  <td>
+                    <button onClick={() => handleEditRow(index)}>Edit</button>
+                    <button onClick={() => handleDeleteRow(index)}>Delete</button>
+                  </td>
+                </>
+              )}
             </tr>
-          </thead>
-          <tbody >
-          {data.map((value, key, index)=>{
-  return(
-          
-              <tr key={key}>
-                <td>{value.id}</td>
-                <td>{value.car.name}</td>
-                <td>{value.car.company}</td>
-                <td>{value.car.cost}</td>
-                <td>{value.car.people}</td>
-                <td>{value.car.location}</td>
-                <td>{value.car.type}</td>
-                <td>{value.car.date}</td>
-                <td>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button size="sm" variant="plain" color="neutral">
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="soft" color="danger">
-                      Delete
-                    </Button>
-                    <Modal open={openDiscard} onClose={() => setOpenDiscard(false)}>
-        <ModalDialog variant="outlined" role="alertdialog">
-          <DialogTitle>
-            <WarningRoundedIcon />  
-            Confirmation
-          </DialogTitle>
-          <Divider />
-          <DialogContent>
-            Are you sure you want to discard all of your notes?
-          </DialogContent>
-          <DialogActions>
-            <Button variant="solid" color="danger" onClick={() => setOpenDiscard(false)}>
-              Discard notes
-            </Button>
-            <Button variant="plain" color="neutral" onClick={() => setOpenDiscard(false)}>
-              Cancel
-            </Button>
-          </DialogActions>
-        </ModalDialog>
-      </Modal>
-                  </Box>
-                </td>
-              </tr>
-        )})};
-          </tbody>
-        </Table>
-      </Sheet>
-    </Box>
- 
-    </>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={handleAddRow}>Add Row</button>
+      
+    </div>
   );
 }
+
+export default NewPage;

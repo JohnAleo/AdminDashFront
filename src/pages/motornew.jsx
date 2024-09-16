@@ -6,7 +6,7 @@ import Button from '@mui/joy/Button';
 import Table from '@mui/joy/Table';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
-import Add from '@mui/icons-material/Add';
+
 // import EditIcon from '@mui/icons-material/Edit';
 // import ImgModal from '../../modal/imgmodal';
 
@@ -14,15 +14,14 @@ import Add from '@mui/icons-material/Add';
 import { errConsole } from "../config";
 import { BaseURL } from '../config';
 import BasicModalDialog from '.././constants/others/modal';
-import { ButtonAdd, DeleteButton, Deletewrapper, EditButton, EditWrapper, SaveButton, Savewrapper, TableContainer } from '../constants/styles/style';
 
 export default function MotorCom() {
   const [open, setOpen] = useState(false);
   const [dataList, setDataList] = useState([]);  
   const [editingIndex, setEditingIndex] =  useState(Array(dataList.length).fill(false)); 
-
-
   const [name, setName] = useState("");
+  // const [Newname, setNewName] = useState();
+  const [brand, setBrand] = useState("");
   const [cost, setCost] = useState("");
   const [company, setCompany] = useState("");
   const [license, setLicense] = useState("");
@@ -30,9 +29,10 @@ export default function MotorCom() {
   const [people, setPeople] = useState("");
   const [type, setType] = useState("");
   const [date, setDate] = useState("");
-  
-// For editing
+  // const [update,setUpdate] =  useState(Array(dataList.length).fill(false));
+
   const [newName, setNewName] = useState();
+  const [newBrand, setNewBrand] = useState();
   const [newCompany, setNewCompany] = useState();
   const [newLicense, setNewLicense] = useState();
   const [newPeople, setNewPeople] = useState();
@@ -46,7 +46,9 @@ export default function MotorCom() {
     if(name !== ''){
       try {
         const response = await axios.post("http://localhost:7070/api/data", {
-            name,       
+            name,
+             
+            brand,
             cost,
             company,
             license,
@@ -58,14 +60,15 @@ export default function MotorCom() {
         console.log(response.data)
         fetchData();
         setName('');
+        setBrand('');
         setCompany('');
         setLocation('');
         setCost('');      
         setType('');
-        setDate();
+        setDate('');
         setPeople('');
         setLicense('');
-        setOpen(false);
+
     } catch (error) {
         console.error('failure', error)
     }  
@@ -89,25 +92,19 @@ export default function MotorCom() {
   const handleEdit = async (oldName) => {
     try {
       const response = await axios.put(`${BaseURL}/${oldName}`, {
-        newName,
-        newCost,
-        newCompany, 
-        newLicense, 
-        newLocation, 
-        newPeople, 
-        newType, 
-        newDate
+        newName,newBrand, newCost, newCompany, newLicense, newLocation, newPeople, newType, newDate
       });
       console.log(response.data);
       fetchData(); 
       setNewName("");
+      setNewBrand("");
       setNewCost("");
       setNewCompany("");
       setNewLicense("");
       setNewLocation("");
       setNewPeople("");
       setNewType("");
-      setNewDate();
+      setNewDate("");
 
       // setEditingIndex( ); 
     } catch (error) {
@@ -124,6 +121,10 @@ export default function MotorCom() {
 const handleChange = (e) => {
     setName(e.target.value)
     console.log("name is clicked")
+};
+const handleBrandChange = (e) => {
+  setBrand(e.target.value)
+  console.log("brand is clicked")
 };
 const handleCompanyChange = (e) => {
   setCompany(e.target.value)
@@ -163,18 +164,19 @@ const DeleteMotor = async (name) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding:"0px 5%" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h1>Motor Page</h1>
-        <ButtonAdd  
-         onClick={() => setOpen(true)}>
+        <button  className="button-40" role="button" onClick={() => setOpen(true)}>
               {" "}
+             
               Add New Motor
-        </ButtonAdd>
-           
+            </button>
       </div>
 
-<TableContainer>
       <Box sx={{ width: '100%' }}>
+        <Typography level="body-sm" textAlign="center" sx={{ pb: 2 }}>
+          Data Table
+        </Typography>
         <Sheet
           variant="outlined"
           sx={{
@@ -188,23 +190,18 @@ const DeleteMotor = async (name) => {
             background: (theme) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0))`,
           }}
         >
-          <Table borderAxis="bothBetween" 
-          stripe="odd" hoverRow
-           sx={{ '& tr > *:first-child': 
-           { position: 'sticky', left: 0, bgcolor: 'background.surface' },
-            '& tr > *:last-child': { position: 'sticky', right: 0, bgcolor: 'var(--TableCell-headBackground)' } 
-            }}>
+          <Table borderAxis="bothBetween" stripe="odd" hoverRow sx={{ '& tr > *:first-child': { position: 'sticky', left: 0, bgcolor: 'background.surface' }, '& tr > *:last-child': { position: 'sticky', right: 0, bgcolor: 'var(--TableCell-headBackground)' } }}>
             <thead>
               <tr>
-                <th style={{ width: 30}}>N</th>
-                <th style={{ width: 100 }}>Name</th>
+                <th style={{ width: '30px' }}>Num</th>
+                <th style={{ width: 130 }}>Name</th>
                 <th style={{ width: 100 }}>Company</th>
                 <th style={{ width: 100 }}>Location</th>
                 <th style={{ width: 100 }}>Cost</th>
-                <th style={{ width: 80 }}>Type</th>
-                <th style={{ width: 100 }}>Date</th>
+                <th style={{ width: 100 }}>Type</th>
+                <th style={{ width: 50 }}>Date</th>
                 <th style={{ width: 50 }}>People</th>
-                <th style={{ width: 100 }} >Buttons</th>
+                <th style={{ width: 80 }} >Buttons</th>
               </tr>
             </thead>
             <tbody>
@@ -215,23 +212,20 @@ const DeleteMotor = async (name) => {
                     {editingIndex[index] ?
                     <> 
                   <td>{index + 1}</td>
+                  <td></td>
                   <td><input type="text" name='name' onChange={(e) =>setNewName(e.target.value)} /></td>   
                   <td><input type="text" name='company' onChange={(e) =>setNewCompany(e.target.value)} /></td>  
                   <td><input type="text" name='location' onChange={(e) =>setNewLocation(e.target.value)} /></td>  
                   <td><input type="number" name='cost' onChange={(e) =>setNewCost(e.target.value)} /></td>  
                   <td><input type="text" name='type' onChange={(e) =>setNewType(e.target.value)} /></td>  
-                  <td><input type="date" name='date' onChange={(e) =>setNewDate(e.target.value)} /></td>  
+                  <td><input type="number" name='date' onChange={(e) =>setNewDate(e.target.value)} /></td>  
                   <td><input type="number" name='people' onChange={(e) =>setNewPeople(e.target.value)} /></td>  
-                  <td style={{display:'flex',gap:'7px'}}>
-                  <Savewrapper>
-                      <SaveButton  onClick={(e) => {handleEdit(value.name); handleClick(index);}} >Save</SaveButton>
-                  </Savewrapper>
-                  <Deletewrapper>
-                      <DeleteButton  onClick={() => DeleteMotor(value.name)} >Delete</DeleteButton>
-                  </Deletewrapper>
+                  <td style={{display:'flex',gap:'7px'}}><button onClick={(e) => {handleEdit(value.name); handleClick(index);}} className="button-68">Save</button>
+                  <button  className="button-45"  onClick={() => DeleteMotor(value.name)} >Delete</button>
                   </td>
                   </>:<>
                   <td>{index + 1}</td>
+                  <td></td>
                   <td>{value.name}</td>
                   <td>{value.company}</td>
                   <td>{value.location}</td>
@@ -239,15 +233,8 @@ const DeleteMotor = async (name) => {
                   <td>{value.type}</td>
                   <td>{value.date}</td>
                   <td>{value.people}</td>
-                  <td  style={{display:'flex',gap:'7px'}}>
-                  <EditWrapper>
-                    <EditButton  onClick={(e) => handleClick(index)}>Edit</EditButton>
-                  </EditWrapper>
-                  <Deletewrapper>
-                    <DeleteButton  onClick={() => DeleteMotor(value.name)} >Delete</DeleteButton>
-                  </Deletewrapper>
-                  </td>
-                  
+                  <td  style={{display:'flex',gap:'7px'}}><button className="button-70"  onClick={(e) => handleClick(index)}>Edit</button>
+                  <button className="button-45" onClick={() => DeleteMotor(value.name)} >Delete</button></td>
                   </>
                   }
 
@@ -258,27 +245,16 @@ const DeleteMotor = async (name) => {
             </tbody>
           </Table>
         </Sheet>
-
-        <BasicModalDialog 
-           open={open} setOpen={setOpen} 
-           name={name} 
-           company={company}
-           location={location} 
-           cost={cost} 
-           type={type}
-           people={people} 
-           date={date} 
-           handleSubmit={handleSubmit}
+        <BasicModalDialog open={open} setOpen={setOpen} 
+        name={name} company={company}
+         location={location} cost={cost} type={type}
+          people={people} date={date} handleSubmit={handleSubmit}
            onChange={handleChange}
-           onCompany={handleCompanyChange} 
-           onCost={handleCostChange}
-           onLocation={handleLocationChange} 
-           onType={handleTypeChange}
-           onDate={handleDateChange} 
-           onPeople={handlePeopleChange}
+           onCompany={handleCompanyChange} onCost={handleCostChange}
+           onLocation={handleLocationChange} onType={handleTypeChange}
+           onDate={handleDateChange} onPeople={handlePeopleChange}
            />
       </Box>
-      </TableContainer>
     </div>
   );
 }

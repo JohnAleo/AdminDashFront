@@ -1,5 +1,12 @@
 import React from 'react'
-import { Button, ButtonModal, Cancelwrapper, Container, Country, Emailwrapper, Inputwrapper, Line, Middle, MiddleLeft, MiddleRight, Namewrapper, Personal, Role, Rolewrapper, Timezone, Wrapper } from '../styles/style'
+import { Button, ButtonModal, 
+  Cancelwrapper,
+   Container, Country, 
+   Emailwrapper, Inputwrapper,
+    Line, Middle, MiddleLeft,
+     MiddleRight, Namewrapper,
+      Personal, Role, Rolewrapper, 
+      Timezone, Wrapper } from '../styles/style'
 import def from "../../assets/def.jpg"
 import Popup from 'reactjs-popup';
 import LoginIcon from '@mui/icons-material/Login';
