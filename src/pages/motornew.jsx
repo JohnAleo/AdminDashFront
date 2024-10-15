@@ -1,260 +1,527 @@
+// // // src/components/AdminDashboard.js
+// // import React, { useState, useEffect } from 'react';
+// // import Modal from 'react-modal';
+// // import ModalForm from '../constants/others/modalnew';
+// // import axios from 'axios';
+// // import { BaseURL } from '../config';
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Table from '@mui/joy/Table';
-import Typography from '@mui/joy/Typography';
-import Sheet from '@mui/joy/Sheet';
+// // Modal.setAppElement('#root');
 
-// import EditIcon from '@mui/icons-material/Edit';
-// import ImgModal from '../../modal/imgmodal';
+// // const MotorNew = () => {
+// //   const [items, setItems] = useState([]);
+// //   const [isModalOpen, setModalOpen] = useState(false);
+// //   const [editData, setEditData] = useState(null);
 
-// import { CiCirclePlus } from "react-icons";
-import { errConsole } from "../config";
-import { BaseURL } from '../config';
-import BasicModalDialog from '.././constants/others/modal';
+// //   useEffect(() => {
+// //     fetchItems();
+// //   }, []);
 
-export default function MotorCom() {
-  const [open, setOpen] = useState(false);
-  const [dataList, setDataList] = useState([]);  
-  const [editingIndex, setEditingIndex] =  useState(Array(dataList.length).fill(false)); 
-  const [name, setName] = useState("");
-  // const [Newname, setNewName] = useState();
-  const [brand, setBrand] = useState("");
-  const [cost, setCost] = useState("");
-  const [company, setCompany] = useState("");
-  const [license, setLicense] = useState("");
-  const [location, setLocation] = useState("");
-  const [people, setPeople] = useState("");
-  const [type, setType] = useState("");
-  const [date, setDate] = useState("");
-  // const [update,setUpdate] =  useState(Array(dataList.length).fill(false));
+// //   const fetchItems = async () => {
+// //     try {
+// //       const response = await fetch(`${BaseURL}`); // Update this URL
+// //       setItems(response.data);
+// //     } catch (error) {
+// //       console.error('Error fetching items:', error);
+// //     }
+// //   };
 
-  const [newName, setNewName] = useState();
-  const [newBrand, setNewBrand] = useState();
-  const [newCompany, setNewCompany] = useState();
-  const [newLicense, setNewLicense] = useState();
-  const [newPeople, setNewPeople] = useState();
-  const [newCost, setNewCost] = useState();
-  const [newType, setNewType] = useState();
-  const [newDate, setNewDate] = useState();
-  const [newLocation, setNewLocation] = useState();
+// //   const openModal = (data = null) => {
+// //     setEditData(data);
+// //     setModalOpen(true);
+// //   };
 
-  const handleSubmit = async (event)=>{
-    event.preventDefault();
-    if(name !== ''){
-      try {
-        const response = await axios.post("http://localhost:7070/api/data", {
-            name,
-             
-            brand,
-            cost,
-            company,
-            license,
-            location,
-            people,
-            type,
-            date,
-        });
-        console.log(response.data)
-        fetchData();
-        setName('');
-        setBrand('');
-        setCompany('');
-        setLocation('');
-        setCost('');      
-        setType('');
-        setDate('');
-        setPeople('');
-        setLicense('');
+// //   const closeModal = () => {
+// //     setEditData(null);
+// //     setModalOpen(false);
+// //   };
 
-    } catch (error) {
-        console.error('failure', error)
-    }  
-    } 
-}
+// //   const handleSubmit = async (data) => {
+// //     try {
+// //       if (editData) {
+// //         await axios.put(`${BaseURL}/${editData.id }`, data); // Update this URL
+// //         setItems((prev) =>
+// //           prev.map((item) => (item.name === editData.name ? data : item))
+// //         );
+// //       } else {
+// //         const response = await axios.post(BaseURL, data); // Update this URL
+// //         setItems((prev) => [...prev, response.data]);
+// //       }
+// //     } catch (error) {
+// //       console.error('Error saving item:', error);
+// //     }
+// //   };
+
+// //   const handleDelete = async (name) => {
+// //     try {
+// //       await axios.delete(`${BaseURL}/${name}`); // Update this URL
+// //       setItems((prev) => prev.filter((item) => item.name !== name));
+// //     } catch (error) {
+// //       console.error('Error deleting item:', error);
+// //     }
+// //   };
+
+// //   return (
+// //     <div>
+// //       <h1>Admin Dashboard</h1>
+// //       <button onClick={() => openModal()}>Add Item</button>
+// //       <table>
+// //         <thead>
+// //           <tr>
+// //           <th style={{ width: 30}}>N</th>
+// //                 <th style={{ width: 100 }}>Name</th>
+// //                 <th style={{ width: 100 }}>Company</th>
+// //                 <th style={{ width: 100 }}>Location</th>
+// //                 <th style={{ width: 100 }}>Cost</th>
+// //                 <th style={{ width: 80 }}>Type</th>
+// //                 <th style={{ width: 100 }}>Date</th>
+// //                 <th style={{ width: 50 }}>People</th>
+// //                 <th style={{ width: 100 }} >Buttons</th>
+// //           </tr>
+// //         </thead>
+// //         <tbody>
+// //           {items.map((item) => (
+// //             <tr key={item.id}> {/* Assuming item has a unique 'id' */}
+// //               <td>{item.name}</td>
+// //               <td>{item.company}</td>
+// //               <td>{item.location}</td>
+// //               <td>{item.cost}</td>
+// //               <td>{item.type}</td>
+// //               <td>{item.date}</td>
+// //               <td>{item.people}</td>
+// //               <td>
+// //                 <button onClick={() => openModal(item)}>Edit</button>
+// //                 <button onClick={() => handleDelete(item.name)}>Delete</button>
+// //               </td>
+// //             </tr>
+// //           ))}
+// //         </tbody>
+// //       </table>
+// //       <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
+// //         <ModalForm isOpen={isModalOpen} onRequestClose={closeModal} onSubmit={handleSubmit} editData={editData} />
+// //       </Modal>
+// //     </div>
+// //   );
+// // };
+
+// // export default MotorNew;
+
+
+// // src/components/AdminDashboard.js
+
+
+
+
+
+
+// // import React, { useState, useEffect } from 'react';
+// // import Modal from 'react-modal';
+// // import ModalForm from '../constants/others/modalnew';
+// // import axios from 'axios';
+// // import { BaseURL } from '../config';
+
+// // Modal.setAppElement('#root');
+
+// // const MotorNew = () => {
+// //   const [items, setItems] = useState([]);
+// //   const [isModalOpen, setModalOpen] = useState(false);
+// //   const [editData, setEditData] = useState(null);
+
+// //   // Retrieve the token from local storage
+// //   const token = localStorage.getItem('token'); // Change 'token' to your actual token key
+
+// //   useEffect(() => {
+// //     fetchItems();
+// //   }, []);
+
+// //   const fetchItems = async () => {
+// //     try {
+// //       const response = await axios.get(BaseURL, {
+// //         headers: {
+// //           Authorization: `Bearer ${token}`, // Include the token in the headers
+// //         },
+// //       });
+// //       setItems(response.data);
+// //     } catch (error) {
+// //       console.error('Error fetching items:', error);
+// //     }
+// //   };
+
+// //   const openModal = (data = null) => {
+// //     setEditData(data);
+// //     setModalOpen(true);
+// //   };
+
+// //   const closeModal = () => {
+// //     setEditData(null);
+// //     setModalOpen(false);
+// //   };
+
+// //   const handleSubmit = async (data) => {
+// //     try {
+// //       if (editData) {
+// //         await axios.put(`${BaseURL}/${editData.id}`, data, {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`, // Include the token for the PUT request
+// //           },
+// //         });
+// //         setItems((prev) =>
+// //           prev.map((item) => (item.id === editData.id ? data : item)) // Use item.id for unique identification
+// //         );
+// //       } else {
+// //         const response = await axios.post(BaseURL, data, {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`, // Include the token for the POST request
+// //           },
+// //         });
+// //         setItems((prev) => [...prev, response.data]);
+// //       }
+     
+// //     } catch (error) {
+// //       console.error('Error saving item:', error);
+// //     }
+// //   };
+
+// //   const handleDelete = async (id) => {
+// //     try {
+// //       await axios.delete(`${BaseURL}/${id}`, {
+// //         headers: {
+// //           Authorization: `Bearer ${token}`, // Include the token for the DELETE request
+// //         },
+// //       });
+// //       setItems((prev) => prev.filter((item) => item.id !== id)); // Use item.id for unique identification
+// //     } catch (error) {
+// //       console.error('Error deleting item:', error);
+// //     }
+// //   };
+
+// //   return (
+// //     <div>
+// //       <h1>Admin Dashboard</h1>
+// //       <button onClick={() => openModal()}>Add Item</button>
+// //       <table>
+// //         <thead>
+// //           <tr>
+// //             <th style={{ width: 30 }}>N</th>
+// //             <th style={{ width: 100 }}>Name</th>
+// //             <th style={{ width: 100 }}>Company</th>
+// //             <th style={{ width: 100 }}>Location</th>
+// //             <th style={{ width: 100 }}>Cost</th>
+// //             <th style={{ width: 80 }}>Type</th>
+// //             <th style={{ width: 100 }}>Date</th>
+// //             <th style={{ width: 50 }}>People</th>
+// //             <th style={{ width: 100 }}>Buttons</th>
+// //           </tr>
+// //         </thead>
+// //         <tbody>
+// //           {items.map((item) => (
+// //             <tr key={item.id}> {/* Assuming item has a unique 'id' */}
+// //               <td>{item.name}</td>
+// //               <td>{item.company}</td>
+// //               <td>{item.location}</td>
+// //               <td>{item.cost}</td>
+// //               <td>{item.type}</td>
+// //               <td>{item.date}</td>
+// //               <td>{item.people}</td>
+// //               <td>
+// //                 <button onClick={() => openModal(item)}>Edit</button>
+// //                 <button onClick={() => handleDelete(item.id)}>Delete</button> {/* Use item.id for deletion */}
+// //               </td>
+// //             </tr>
+// //           ))}
+// //         </tbody>
+// //       </table>
+// //       <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
+// //         <ModalForm isOpen={isModalOpen} onRequestClose={closeModal} onSubmit={handleSubmit} editData={editData} />
+// //       </Modal>
+// //     </div>
+// //   );
+// // };
+
+// // export default MotorNew;
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import Modal from 'react-modal';
+// import ModalForm from '../constants/others/modalnew';
+// import axios from 'axios';
+// import { BaseURL } from '../config';
+
+// Modal.setAppElement('#root');
+
+// const MotorNew = () => {
+//   const [items, setItems] = useState([]);
+//   const [isModalOpen, setModalOpen] = useState(false);
+//   const [editData, setEditData] = useState(null);
+
+//   // Retrieve the token from local storage
+//   const token = localStorage.getItem('token'); // Change 'token' to your actual token key
+
+//   useEffect(() => {
+//     fetchItems();
+//   }, []);
+
+//   const fetchItems = async () => {
+//     if (!token) {
+//       console.error('No token found. Please log in.');
+//       return;
+//     }
+
+//     try {
+//       const response = await axios.get(BaseURL, {
+//         headers: {
+//           Authorization: `Bearer ${token}`, // Include the token in the headers
+//         },
+//       });
+//       setItems(response.data);
+//     } catch (error) {
+//       // Improved error logging
+//       if (error.response) {
+//         console.error('Error fetching items:', error.response.data);
+//       } else if (error.request) {
+//         console.error('No response received:', error.request);
+//       } else {
+//         console.error('Error setting up the request:', error.message);
+//       }
+//     }
+//   };
+
+//   const openModal = (data = null) => {
+//     setEditData(data);
+//     setModalOpen(true);
+//   };
+
+//   const closeModal = () => {
+//     setEditData(null);
+//     setModalOpen(false);
+//   };
+
+//   // const handleSubmit = async (data) => {
+//   //   try {
+//   //     if (editData) {
+//   //       await axios.put(`${BaseURL}/${editData.id}`, data, {
+//   //         headers: {
+//   //           Authorization: `Bearer ${token}`, // Include the token for the PUT request
+//   //         },
+//   //       });
+//   //       setItems((prev) =>
+//   //         prev.map((item) => (item.id === editData.id ? { ...item, ...data } : item)) // Use item.id for unique identification
+//   //       );
+//   //     } else {
+//   //       const response = await axios.post(BaseURL, data, {
+//   //         headers: {
+//   //           Authorization: `Bearer ${token}`, // Include the token for the POST request
+//   //         },
+//   //       });
+//   //       setItems((prev) => [...prev, response.data]);
+//   //     }
+//   //   } catch (error) {
+//   //     console.error('Error saving item:', error);
+//   //   }
+//   // };
+
  
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(BaseURL);  
-      setDataList(response.data);  
-    } catch (error) {
-      console.error(errConsole, error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();  
-  }, );
-
-  
-  const handleEdit = async (oldName) => {
-    try {
-      const response = await axios.put(`${BaseURL}/${oldName}`, {
-        newName,newBrand, newCost, newCompany, newLicense, newLocation, newPeople, newType, newDate
-      });
-      console.log(response.data);
-      fetchData(); 
-      setNewName("");
-      setNewBrand("");
-      setNewCost("");
-      setNewCompany("");
-      setNewLicense("");
-      setNewLocation("");
-      setNewPeople("");
-      setNewType("");
-      setNewDate("");
-
-      // setEditingIndex( ); 
-    } catch (error) {
-      console.log(errConsole, error);
-    }
-  };
-
-  const handleClick = (index) =>{
-    const newEditMode = [...editingIndex];
-    newEditMode[index] = !newEditMode[index]
-    setEditingIndex(newEditMode)
-  }
-
-const handleChange = (e) => {
-    setName(e.target.value)
-    console.log("name is clicked")
-};
-const handleBrandChange = (e) => {
-  setBrand(e.target.value)
-  console.log("brand is clicked")
-};
-const handleCompanyChange = (e) => {
-  setCompany(e.target.value)
-  console.log("company is clicked")
-};
-const handleLocationChange = (e) => {
-setLocation(e.target.value)
-console.log("brand is clicked")
-};
-const handleCostChange = (e) => {
-  setCost(e.target.value)
-  console.log("name is clicked")
-};
-const handleTypeChange = (e) => {
-setType(e.target.value)
-console.log("brand is clicked")
-};
-const handleDateChange = (e) => {
-  setDate(e.target.value)
-  console.log("name is clicked")
-};
-const handlePeopleChange = (e) => {
-setPeople(e.target.value)
-console.log("brand is clicked")
-};
 
 
-const DeleteMotor = async (name) => {
-    try {
-      const response = await axios.delete(`${BaseURL}/${name}`);
-      console.log(response.data);
-    } catch (error) {
-      console.log(errConsole, error);
-    }
-  };
+//   const handleDelete = async (id) => {
+//     try {
+//       await axios.delete(`${BaseURL}/${id}`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`, // Include the token for the DELETE request
+//         },
+//       });
+//       setItems((prev) => prev.filter((item) => item.id !== id)); // Use item.id for unique identification
+//     } catch (error) {
+//       console.error('Error deleting item:', error);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h1>Admin Dashboard</h1>
+//       <button onClick={() => openModal()}>Add Item</button>
+//       <table>
+//         <thead>
+//           <tr>
+//             <th style={{ width: 30 }}>N</th>
+//             <th style={{ width: 100 }}>Name</th>
+//             <th style={{ width: 100 }}>Company</th>
+//             <th style={{ width: 100 }}>Location</th>
+//             <th style={{ width: 100 }}>Cost</th>
+//             <th style={{ width: 80 }}>Type</th>
+//             <th style={{ width: 100 }}>Date</th>
+//             <th style={{ width: 50 }}>People</th>
+//             <th style={{ width: 100 }}>Buttons</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {items.map((value, index) => {
+//             return(
+//             <tr key={index+1}> {/* Assuming item has a unique 'id' */}
+//               <td>{value.name}</td>
+//               <td>{value.company}</td>
+//               <td>{value.location}</td>
+//               <td>{value.cost}</td>
+//               <td>{value.type}</td>
+//               <td>{value.date}</td>
+//               <td>{value.people}</td>
+//               <td>
+//                 <button onClick={() => openModal(item)}>Edit</button>
+//                 <button onClick={() => handleDelete(item.id)}>Delete</button> {/* Use item.id for deletion */}
+//               </td>
+//             </tr>
+//           )})}
+//         </tbody>
+//       </table>
+//       <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
+//         <ModalForm isOpen={isModalOpen} onRequestClose={closeModal} onSubmit={handleSubmit} editData={editData} />
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default MotorNew;
 
 
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <h1>Motor Page</h1>
-        <button  className="button-40" role="button" onClick={() => setOpen(true)}>
-              {" "}
-             
-              Add New Motor
-            </button>
-      </div>
 
-      <Box sx={{ width: '100%' }}>
-        <Typography level="body-sm" textAlign="center" sx={{ pb: 2 }}>
-          Data Table
-        </Typography>
-        <Sheet
-          variant="outlined"
-          sx={{
-            '--TableCell-height': '40px',
-            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-            '--Table-firstColumnWidth': '80px',
-            '--Table-lastColumnWidth': '144px',
-            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
-            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
-            overflow: 'auto',
-            background: (theme) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0))`,
-          }}
-        >
-          <Table borderAxis="bothBetween" stripe="odd" hoverRow sx={{ '& tr > *:first-child': { position: 'sticky', left: 0, bgcolor: 'background.surface' }, '& tr > *:last-child': { position: 'sticky', right: 0, bgcolor: 'var(--TableCell-headBackground)' } }}>
-            <thead>
-              <tr>
-                <th style={{ width: '30px' }}>Num</th>
-                <th style={{ width: 130 }}>Name</th>
-                <th style={{ width: 100 }}>Company</th>
-                <th style={{ width: 100 }}>Location</th>
-                <th style={{ width: 100 }}>Cost</th>
-                <th style={{ width: 100 }}>Type</th>
-                <th style={{ width: 50 }}>Date</th>
-                <th style={{ width: 50 }}>People</th>
-                <th style={{ width: 80 }} >Buttons</th>
-              </tr>
-            </thead>
-            <tbody>
-            
-              {dataList.map((value,index) =>{
-                return(
-                  <tr key={index}>
-                    {editingIndex[index] ?
-                    <> 
-                  <td>{index + 1}</td>
-                  <td></td>
-                  <td><input type="text" name='name' onChange={(e) =>setNewName(e.target.value)} /></td>   
-                  <td><input type="text" name='company' onChange={(e) =>setNewCompany(e.target.value)} /></td>  
-                  <td><input type="text" name='location' onChange={(e) =>setNewLocation(e.target.value)} /></td>  
-                  <td><input type="number" name='cost' onChange={(e) =>setNewCost(e.target.value)} /></td>  
-                  <td><input type="text" name='type' onChange={(e) =>setNewType(e.target.value)} /></td>  
-                  <td><input type="number" name='date' onChange={(e) =>setNewDate(e.target.value)} /></td>  
-                  <td><input type="number" name='people' onChange={(e) =>setNewPeople(e.target.value)} /></td>  
-                  <td style={{display:'flex',gap:'7px'}}><button onClick={(e) => {handleEdit(value.name); handleClick(index);}} className="button-68">Save</button>
-                  <button  className="button-45"  onClick={() => DeleteMotor(value.name)} >Delete</button>
-                  </td>
-                  </>:<>
-                  <td>{index + 1}</td>
-                  <td></td>
-                  <td>{value.name}</td>
-                  <td>{value.company}</td>
-                  <td>{value.location}</td>
-                  <td>{value.cost}</td>
-                  <td>{value.type}</td>
-                  <td>{value.date}</td>
-                  <td>{value.people}</td>
-                  <td  style={{display:'flex',gap:'7px'}}><button className="button-70"  onClick={(e) => handleClick(index)}>Edit</button>
-                  <button className="button-45" onClick={() => DeleteMotor(value.name)} >Delete</button></td>
-                  </>
-                  }
 
-                  </tr>
-                )
-              })}
-              
-            </tbody>
-          </Table>
-        </Sheet>
-        <BasicModalDialog open={open} setOpen={setOpen} 
-        name={name} company={company}
-         location={location} cost={cost} type={type}
-          people={people} date={date} handleSubmit={handleSubmit}
-           onChange={handleChange}
-           onCompany={handleCompanyChange} onCost={handleCostChange}
-           onLocation={handleLocationChange} onType={handleTypeChange}
-           onDate={handleDateChange} onPeople={handlePeopleChange}
-           />
-      </Box>
-    </div>
-  );
-}
+// //Oxirgi ko'rinishi
+
+// // import React, { useState, useEffect } from 'react';
+// // import Modal from 'react-modal';
+// // import ModalForm from '../constants/others/modalnew';
+// // import axios from 'axios';
+// // import { BaseURL } from '../config';
+
+// // Modal.setAppElement('#root');
+
+// // const MotorNew = () => {
+// //   const [items, setItems] = useState([]);
+// //   const [isModalOpen, setModalOpen] = useState(false);
+// //   const [editData, setEditData] = useState(null);
+
+// //   const token = localStorage.getItem('token'); // Change 'token' to your actual token key
+
+// //   useEffect(() => {
+// //     fetchItems();
+// //   }, []);
+
+// //   const fetchItems = async () => {
+// //     try {
+// //       const response = await axios.get(BaseURL, {
+// //         headers: {
+// //           Authorization: `Bearer ${token}`,
+// //         },
+// //       });
+// //       console.log("fetching")
+// //       setItems(response.data);
+// //     } catch (error) {
+// //       console.error('Error fetching items:', error);
+// //     }
+// //   };
+
+// //   const openModal = (data = null) => {
+// //     setEditData(data); // Set the data for editing
+// //     setModalOpen(true);
+// //   };
+
+// //   const closeModal = () => {
+// //     setEditData(null);
+// //     setModalOpen(false);
+// //   };
+
+// //   const handleSubmit = async (data) => {
+
+// //     try {
+// //       if (editData) {
+// //         // Editing an existing item
+// //         const response = await axios.put(`${BaseURL}/${editData.id}`, data, {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         });
+// //         setItems((prev) =>
+// //           prev.map((item) => (item.id === editData.id ? response.data : item))
+// //         );
+// //       } else {
+// //         // Adding a new item
+// //         const response = await fetch(BaseURL, {
+// //           method:"POST",
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         });
+// //         console.log("1")
+// //         setItems((prev) => [...prev, response.data]);
+// //         console.log('2')
+// //       }
+// //     } catch (error) {
+// //       console.error('Error saving item:', error);
+// //     }
+// //   };
+
+// //   const handleDelete = async (id) => {
+// //     try {
+// //       await axios.delete(`${BaseURL}/${id}`, {
+// //         headers: {
+// //           Authorization: `Bearer ${token}`,
+// //         },
+// //       });
+// //       setItems((prev) => prev.filter((item) => item.id !== id));
+// //     } catch (error) {
+// //       console.error('Error deleting item:', error);
+// //     }
+// //   };
+
+// //   return (
+// //     <div>
+// //       <h1>Admin Dashboard</h1>
+// //       <button onClick={() => openModal()}>Add Item</button>
+// //       <table>
+// //         <thead>
+// //           <tr>
+// //             <th style={{ width: 30 }}>N</th>
+// //             <th style={{ width: 100 }}>Name</th>
+// //             <th style={{ width: 100 }}>Company</th>
+// //             <th style={{ width: 100 }}>Location</th>
+// //             <th style={{ width: 100 }}>Cost</th>
+// //             <th style={{ width: 80 }}>Type</th>
+// //             <th style={{ width: 100 }}>Date</th>
+// //             <th style={{ width: 50 }}>People</th>
+// //             <th style={{ width: 100 }}>Buttons</th>
+// //           </tr>
+// //         </thead>
+// //         <tbody>
+// //           {items.map((item) => (
+// //             <tr key={item.id}>
+// //               <td>{item.name}</td>
+// //               <td>{item.company}</td>
+// //               <td>{item.location}</td>
+// //               <td>{item.cost}</td>
+// //               <td>{item.type}</td>
+// //               <td>{item.date}</td>
+// //               <td>{item.people}</td>
+// //               <td>
+// //                 <button onClick={() => openModal(item)}>Edit</button>
+// //                 <button onClick={() => handleDelete(item.id)}>Delete</button>
+// //               </td>
+// //             </tr>
+// //           ))}
+// //         </tbody>
+// //       </table>
+// //       <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
+// //         <ModalForm 
+// //           isOpen={isModalOpen} 
+// //           onRequestClose={closeModal} 
+// //           onSubmit={handleSubmit} 
+// //           editData={editData} 
+// //         />
+// //       </Modal>
+// //     </div>
+// //   );
+// // };
+
+// // export default MotorNew;
+

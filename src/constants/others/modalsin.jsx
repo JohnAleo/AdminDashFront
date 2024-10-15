@@ -13,30 +13,76 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { BaseURL } from '../../config';
 import { errConsole } from '../../config';
+import { CustomLabel, FileUploadWrapper, StyledFileUpload } from "../styles/stylenew";
 const axios = require("axios")
 
-  export default function BasicModalDialog ({
-    open,
-    setOpen,
-    name,
-    handleSubmit, 
-    onChange,   
-    onCompany, 
-    onLocation, 
-    onCost, 
-    onType, 
-    onPeople, 
-    onDate,   
-    cost,   
-    company,
-    location,
-    people,
-    type,
-    date,  } ) {
+
+
+  export default function BasicModalNew ({ onAddData }) {
+
+      const [open, setOpen]=React.useState(false);
+
+      ////Data/////
+    const [name, setName] = React.useState("");
+    const [company, setCompany] = React.useState("");
+    const [location, setLocation] = React.useState("");
+    const [cost, setCost] = React.useState("");
+    const [people, setPeople] = React.useState("");
+    const [type, setType] = React.useState("");
+    const [date, setDate] = React.useState("");
+
+    const [message, setMessage]=React.useState("")
+
+    const handleSubmit = async (event)=>{
+      event.preventDefault();
+      if(name !== ''){
+        try {
+          const response = await axios.post("http://localhost:7070/api/data", {
+              name,       
+              cost,
+              company,
+              location,
+              people,
+              type,
+              date,
+          });
+         const data= await response.json()
+       
+         console.log(response.data);
+         onAddData(data.newData)
+          setOpen(false);
+      } catch (error) {
+          console.error('failure', error)
+      }  
+      } 
+  };
+
+  const handleChangeName = (e) => {
+    setName(e.target.value);
+  };
+  const handleChangeCost = (e) => {
+    setCost(e.target.value);
+  };
+  const handleChangeCompany = (e) => {
+    setCompany(e.target.value);
+  };
+
+  const handleChangeLocation = (e) => {
+    setLocation(e.target.value);
+  };
+  const handleChangePeople = (e) => {
+    setPeople(e.target.value);
+  };
+  const handleChangeType = (e) => {
+    setType(e.target.value);
+  };
+  const handleChangeDate = (e) => {
+    setDate(e.target.value);
+  };
+
+  
  
-//  const onClik = ()=>{
-//   setOpen(false);
-//  }
+
   return (
     <React.Fragment>
         <Button
@@ -51,7 +97,12 @@ const axios = require("axios")
         open={open}
         onClose={() => setOpen(false)}>
         <ModalDialog>
-          
+        <FileUploadWrapper>
+              <StyledFileUpload id="fileInput" type="file" />
+              <CustomLabel htmlFor="fileInput"></CustomLabel>
+              Upload photo
+              <Button   >AUTO FILL DEMO DATA</Button>
+            </FileUploadWrapper>
           <form
             onSubmit={handleSubmit}
           >
@@ -62,7 +113,7 @@ const axios = require("axios")
                       type="text"
                       placeholder="Name"
                       value={name}
-                      onChange={ onChange}
+                      onChange={handleChangeName}
                     />
 
               </FormControl>
@@ -72,7 +123,7 @@ const axios = require("axios")
                  type="text"
                  placeholder="Company"
                  value={company}
-                 onChange={ onCompany} />
+                 onChange={handleChangeCompany} />
               </FormControl>
               <FormControl>
                 <FormLabel>Location</FormLabel>
@@ -80,7 +131,7 @@ const axios = require("axios")
                  type="text"
                  placeholder="Location"
                  value={location}
-                 onChange={ onLocation} />
+                 onChange={handleChangeLocation} />
               </FormControl>
               <FormControl>
                 <FormLabel>Cost</FormLabel>
@@ -88,7 +139,7 @@ const axios = require("axios")
                  type="number"
                  placeholder="Cost"
                  value={cost}
-                 onChange={ onCost} />
+                 onChange={handleChangeCost} />
               </FormControl>
               <FormControl>
                 <FormLabel>Type</FormLabel>
@@ -96,7 +147,7 @@ const axios = require("axios")
                  type="text"
                  placeholder="Type"
                  value={type}
-                 onChange={ onType} />
+                 onChange={handleChangeType} />
               </FormControl>
               <FormControl>
                 <FormLabel>Date</FormLabel>
@@ -104,7 +155,7 @@ const axios = require("axios")
                  type="date"
                  placeholder="Date"
                  value={date}
-                 onChange={ onDate} />
+                 onChange={handleChangeDate} />
               </FormControl>
               <FormControl>
               <FormLabel>People</FormLabel>
@@ -112,12 +163,11 @@ const axios = require("axios")
                  type="number"
                  placeholder="People"
                value={people}
-                 onChange={ onPeople} />
+                 onChange={handleChangePeople} />
               </FormControl>
     
               <Button  
                 type="submit"
-                // onClick={() => setOpen(false)}
               >Submit</Button>
             </Stack>
           </form>

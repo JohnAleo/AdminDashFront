@@ -1,5 +1,5 @@
 import React from 'react'
-import MotorComponent from './pages/motor'
+import MotorComponent from './pages/motorfile/motor'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import CaravanComponent from './pages/caravan'
 import TuningComponent from './pages/tuning'
@@ -8,21 +8,25 @@ import CampingComponent from './pages/camping'
 import UserListComponent from './pages/userlist'
 import LoginComponent from './constants/others/login'
 import LoginPage from './pages/loginpage'
+import MotorNew from './pages/motornew'
 import Sidebar from './constants/sidebar'
 import DisplayHome from './constants/others/display'
+
+
 
 
 
 const RouterComponent = () => {
   return (
     <>
-      {/* <DisplayHome>
+      <DisplayHome>
         <Sidebar />
-      </DisplayHome> */}
+      </DisplayHome>
     <Routes>
         <Route path="/" element={<LoginPage  />}/>
         <Route path="/motor" element={<MotorComponent />}/>
-        <Route path="/caravan" element={<CaravanComponent />}/>
+        {/* <Route path="/motornew" element={<MotorNew />}/> */}
+        {/* <Route path="/caravan" element={<CaravanComponent />}/> */}
         <Route path="/tuning" element={<TuningComponent />}/>
         <Route path="/used-car" element={<UsedCarComponent />}/>
         <Route path="/camping-place" element={<CampingComponent />}/>

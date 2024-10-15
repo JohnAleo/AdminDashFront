@@ -1,169 +1,131 @@
-import React, { useState ,useEffect} from 'react';
-import axios from "axios"
-import { BaseURL, errConsole } from '../config';
-function NewPage() {
-    // React functions
-  const [tableData, setTableData] = useState([]);
-  const [editingRow, setEditingRow] = useState(null);
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
+import Table from '@mui/joy/Table';
+import Typography from '@mui/joy/Typography';
+import Sheet from '@mui/joy/Sheet';
+import BasicModalDialog from '.././constants/others/modal';
+import { BaseURL } from '../config';
+import { ButtonAdd, DeleteButton, EditButton, TableContainer } from '../constants/styles/style';
 
-  const [name, setName]= useState("")
-  const [company, setCompany]= useState("")
-  const [cost, setCost]= useState("")
-  const [people, setPeople]= useState("")
-  const [location, setLocation]= useState("")
-  const [type, setType]= useState("")
-  const [date, setDate]= useState("")
-  const [newName, setNewName]= useState("")
-  const [newCompany, setNewCompany]= useState("")
-  const [newCost, setNewCost]= useState("")
-  const [newPeople, setNewPeople]= useState("")
-  const [newLocation, setNewLocation]= useState("")
-  const [newType, setNewType]= useState("")
-  const [newDate, setNewDate]= useState("")
+export default function MotorComponent() {
+  const [open, setOpen] = useState(false);
+  const [dataList, setDataList] = useState([]);
+  
+  // State for form fields
+  const [name, setName] = useState("");
+  const [cost, setCost] = useState("");
+  const [company, setCompany] = useState("");
+  const [location, setLocation] = useState("");
+  const [people, setPeople] = useState("");
+  const [type, setType] = useState("");
+  const [date, setDate] = useState("");
 
-  useEffect(()=>{
-    fetchData(); 
-  },)
-  const fetchData=async()=>{
+  const fetchData = async () => {
     try {
-      const response= await axios.get(BaseURL);
-      setTableData(response.data);
+      const response = await axios.get(BaseURL);
+      setDataList(response.data);
     } catch (error) {
-     console.log(errConsole,error) 
+      console.error("Error fetching data:", error);
     }
-  }
-  const handleAddRow = async (event) => {
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Handle form submission
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if(name !== ''){
+    if (name !== '') {
       try {
-        const response= await axios.post(BaseURL, {
-          name, company,cost, people, location ,type, date
+        const token = localStorage.getItem("token"); // Get the token from local storage
+        const response = await axios.post("http://localhost:7070/api/data", {
+          name,
+          cost,
+          company,
+          location,
+          people,
+          type,
+          date,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}` // Add the token to the headers
+          }
         });
-        console.log(response.data)
-        fetchData();
-        setName('')
-        setCompany('')
-        setCost('')
-        setPeople('')
-        setLocation('')
-        setType('')
-        setDate('')
+        console.log(response.data);
+        fetchData(); // Fetch updated data
+        // Clear the form fields
+        setName('');
+        setCompany('');
+        setLocation('');
+        setCost('');
+        setType('');
+        setDate('');
+        setPeople('');
+        setOpen(false); // Close the modal
       } catch (error) {
-        console.error(errConsole, error);
+        console.error('Failure:', error);
       }
     }
-    setTableData([...tableData, { name: '', company: '', cost: '', people: '', location: '', type: '', date: '' }]);
   };
-
-  // const handleEditRow = (index) => {
-  //   setEditingRow(index);
-  // };
-  const handleEditRow = async(oldname) =>{
-    try {
-      const response=await axios.put(`${BaseURL}/${oldname}`, 
-      {
-      newName,
-      newCompany,
-      newCost,
-      newPeople,
-      newLocation,
-      newType,
-      newDate  
-      })
-      console.log(response.data)
-
-      setNewName("");
-      setNewCompany("");
-      setNewCost("")
-      setNewPeople("")
-      setNewLocation("")
-      setNewType("")
-      setNewDate("")
-      setEditingRow(null)
-      fetchData();
-    } catch (error) {
-      console.error(errConsole)
-    }
-  }
-
-  const handleDeleteRow = async (oldname) => {
-    try {
-      const response= await axios.delete(`${BaseURL}/${oldname}`);
-      console.log(response.data);
-      fetchData();
-    } catch (error) {
-      console.error(errConsole)
-    }
-    // const updatedTableData = [...tableData];
-    // updatedTableData.splice(index, 1);
-    // setTableData(updatedTableData);
-  };
-
-  const handleInputChange = (event, index, field) => {
-    const updatedTableData = [...tableData];
-    updatedTableData[index][field] = event.target.value;
-    setTableData(updatedTableData);
-  };
-
-  const handleSaveRow = (index) => {
-    setEditingRow(null);
-  };
-//   
-
 
   return (
-    <div className="container">
-      <h1>Admin Dashboard</h1>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Company</th>
-            <th>Cost</th>
-            <th>People</th>
-            <th>Location</th>
-            <th>Type</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((row, index) => (
-            <tr key={index}>
-              {editingRow === index ? (
-                <>
-                  <td><input type="text" value={row.name} onChange={(event) => handleInputChange(event, index, 'name')} /></td>
-                  <td><input type="text" value={row.company} onChange={(event) => handleInputChange(event, index, 'company')} /></td>
-                  <td><input type="number" value={row.cost} onChange={(event) => handleInputChange(event, index, 'cost')} /></td>
-                  <td><input type="number" value={row.people} onChange={(event) => handleInputChange(event, index, 'people')} /></td>
-                  <td><input type="text" value={row.location} onChange={(event) => handleInputChange(event, index, 'location')} /></td>
-                  <td><input type="text" value={row.type} onChange={(event) => handleInputChange(event, index, 'type')} /></td>
-                  <td><input type="date" value={row.date} onChange={(event) => handleInputChange(event, index, 'date')} /></td>
-                  <td><button onClick={() => handleSaveRow(index)}>Save</button></td>
-                </>
-              ) : (
-                <>
-                  <td>{row.name || `no name`}</td>
-                  <td>{row.company || `no company`}</td>
-                  <td>{row.cost || `no cost`}</td>
-                  <td>{row.people || `no people`}</td>
-                  <td>{row.location || `no location`}</td>
-                  <td>{row.type || `no type`}</td>
-                  <td>{row.date || `no date`}</td>
-                  <td>
-                    <button onClick={() => handleEditRow(index)}>Edit</button>
-                    <button onClick={() => handleDeleteRow(index)}>Delete</button>
-                  </td>
-                </>
-              )}
+    <div>
+      <h1>Motor Page</h1>
+      <Button onClick={() => setOpen(true)}>Add New Item</Button>
+      <TableContainer>
+        <Table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Cost</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>People</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={handleAddRow}>Add Row</button>
-      
+          </thead>
+          <tbody>
+            {dataList.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.company}</td>
+                <td>{item.location}</td>
+                <td>{item.cost}</td>
+                <td>{item.type}</td>
+                <td>{item.date}</td>
+                <td>
+                  <EditButton>Edit</EditButton>
+                  <DeleteButton>Delete</DeleteButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </TableContainer>
+      <BasicModalDialog 
+        open={open} 
+        setOpen={setOpen} 
+        name={name} 
+        company={company}
+        location={location} 
+        cost={cost} 
+        type={type}
+        people={people} 
+        date={date} 
+        handleSubmit={handleSubmit} // Pass the handleSubmit function
+        onChange={setName} // You can pass other handlers as needed
+        onCompany={setCompany} 
+        onLocation={setLocation} 
+        onCost={setCost}
+        onType={setType}
+        onDate={setDate}
+        onPeople={setPeople}
+      />
     </div>
   );
 }
-
-export default NewPage;
